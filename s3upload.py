@@ -73,6 +73,24 @@ def uploader(bucket, aws_access_key, aws_secret_key,
              parallelism=5, replace=False, secure=True,
              buffer=data_collector,
              connection=None):
+    ''' Upload data to s3 using the s3 multipart upload API.
+
+        Args:
+            bucket: name of s3 bucket
+            aws_access_key: aws access key
+            aws_secret_key: aws secret key
+            iterable: The data to upload. Each 'part' in the list
+            will be uploaded in parallel. Each part must be at
+            least 5242880 bytes (5mb).
+            key: the name of the key to create in the s3 bucket
+            progress_cb: will be called with (part_no, uploaded, total)
+            each time a progress update is available.
+            parallelism: the number of threads to use while uploading.
+            replace: will replace the key in s3 if set to true. (Default is false)
+            secure: use ssl when talking to s3. (Default is true)
+            buffer: REMOVE THIS
+            connection: used for testing
+    '''
 
     if not connection:
         from boto.s3 import connection
