@@ -12,13 +12,6 @@ except ImportError:
     import StringIO
 
 
-class ThreadPoolError(Exception):
-    def __init__(self, thread, exception):
-        self.thread = thread
-        self.inner_exception = exception
-    def __str__(self):
-        return repr(self.thread) + ' ' + repr(self.inner_exception)
-
 def data_collector(iterable, def_buf_size=5242880):
     ''' Buffers n bytes of data
 
@@ -52,7 +45,7 @@ def upload_part(upload_func, progress_cb, part_no, part_data):
                 if retries_left > 0:
                     return _upload_part(retries_left=retries_left)
                 else:
-                    return ThreadPoolError(threading.current_thread(), exc)
+                    return threading.ThreadError(repr(threading.current_thread()) + ' ' + repr(exc))
         return _upload_part()
 
 def upload(bucket, aws_access_key, aws_secret_key,
