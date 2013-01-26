@@ -97,7 +97,7 @@ def upload(bucket, aws_access_key, aws_secret_key,
         def waiter():
             while upload.counter >= parallelism:
                 check_errors()
-                time.sleep(0.5)
+                time.sleep(0.1)
 
         def cb(err):
             if err: err_queue.put(err)
