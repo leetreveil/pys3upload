@@ -1,1 +1,0 @@
-from s3upload import *
