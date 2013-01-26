@@ -19,19 +19,6 @@ class ThreadPoolError(Exception):
     def __str__(self):
         return repr(self.thread) + ' ' + repr(self.inner_exception)
 
-class ThreadSafeCounter():
-    def __init__(self):
-        self.lock = threading.Lock()
-        self.counter = 0
-
-    def increment(self):
-        with self.lock:
-            self.counter += 1
-
-    def decrement(self):
-        with self.lock:
-            self.counter -= 1
-
 def data_collector(iterable, def_buf_size=5242880):
     ''' Buffers n bytes of data
 
@@ -101,7 +88,8 @@ def upload(bucket, aws_access_key, aws_secret_key,
 
     multipart_obj = b.initiate_multipart_upload(key)
     err_queue = Queue.Queue()
-    in_upload = ThreadSafeCounter()
+    lock = threading.Lock()
+    upload.counter = 0
 
     try:
         tpool = pool.ThreadPool(processes=parallelism)
@@ -115,20 +103,20 @@ def upload(bucket, aws_access_key, aws_secret_key,
                 raise exc
 
         def waiter():
-            while in_upload.counter >= parallelism:
+            while upload.counter >= parallelism:
                 check_errors()
                 time.sleep(0.5)
 
         def cb(err):
             if err: err_queue.put(err)
-            in_upload.decrement()
+            with lock: upload.counter -= 1
 
         args = [multipart_obj.upload_part_from_file, progress_cb]
 
         for part_no, part in enumerate(iterable):
             part_no += 1
             tpool.apply_async(upload_part, args + [part_no, part], callback=cb)
-            in_upload.increment()
+            with lock: upload.counter += 1
             waiter()
 
         tpool.close()
