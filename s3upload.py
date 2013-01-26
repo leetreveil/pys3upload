@@ -69,7 +69,6 @@ def upload(bucket, aws_access_key, aws_secret_key,
             secure: use ssl when talking to s3. (Default is true)
             connection: used for testing
     '''
-
     if not connection:
         from boto.s3 import connection
 
@@ -77,7 +76,7 @@ def upload(bucket, aws_access_key, aws_secret_key,
     b = c.get_bucket(bucket)
 
     if not replace and b.lookup(key):
-        raise Exception('s3 key ' + key + ' already exists')    
+        raise Exception('s3 key ' + key + ' already exists')
 
     multipart_obj = b.initiate_multipart_upload(key)
     err_queue = Queue.Queue()
