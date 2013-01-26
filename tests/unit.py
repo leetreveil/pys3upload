@@ -1,4 +1,4 @@
-import unittest
+from tests import unittest
 import mocks
 import sys
 import threading
