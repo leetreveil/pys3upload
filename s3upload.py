@@ -68,10 +68,10 @@ def upload_part(upload_func, progress_cb, part_no, part_data):
                     return ThreadPoolError(threading.current_thread(), exc)
         return _upload_part()
 
-def uploader(bucket, aws_access_key, aws_secret_key,
-             iterable, key, progress_cb=None,
-             parallelism=5, replace=False, secure=True,
-             connection=None):
+def upload(bucket, aws_access_key, aws_secret_key,
+           iterable, key, progress_cb=None,
+           parallelism=5, replace=False, secure=True,
+           connection=None):
     ''' Upload data to s3 using the s3 multipart upload API.
 
         Args:
@@ -176,5 +176,5 @@ if __name__ == '__main__':
     def cb(part_no, uploaded, total):
         print part_no, uploaded, total
 
-    uploader(options.bucket, options.aws_key, options.aws_secret, buffer(data), options.key,
-             progress_cb=cb, replace=True)
+    upload(options.bucket, options.aws_key, options.aws_secret, buffer(data), options.key,
+           progress_cb=cb, replace=True)
