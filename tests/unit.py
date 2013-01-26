@@ -1,6 +1,7 @@
 import unittest
 import mocks
 import sys
+import threading
 import s3upload
 
 
@@ -14,11 +15,11 @@ class upload_tests(unittest.TestCase):
 
 class upload_part_tests(unittest.TestCase):
     
-    def test_should_return_thread_pool_error_when_upload_func_breaks(self):
+    def test_should_return_error_when_upload_func_raises_error(self):
         def upload_func(*args, **kwargs):
             raise Exception()
 
-        with self.assertRaises(s3upload.ThreadPoolError):
+        with self.assertRaises(threading.ThreadError):
             raise s3upload.upload_part(upload_func, '_', '_', '_')
 
     def test_should_retry_upload_five_times(self):
