@@ -10,7 +10,7 @@ class upload_tests(unittest.TestCase):
         input = ['12', '345']
         mocks.state['mock_boto_s3_multipart_upload_data'] = []
         s3upload.uploader('test_bucket', 'some_key', 'some_secret', input, 'some_key', connection=mocks)
-        self.assertEqual(mocks.state['mock_boto_s3_multipart_upload_data'], ['12345'])
+        self.assertEqual(mocks.state['mock_boto_s3_multipart_upload_data'], ['12', '345'])
 
 class upload_part_tests(unittest.TestCase):
     

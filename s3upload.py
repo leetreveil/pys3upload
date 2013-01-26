@@ -71,7 +71,6 @@ def upload_part(upload_func, progress_cb, part_no, part_data):
 def uploader(bucket, aws_access_key, aws_secret_key,
              iterable, key, progress_cb=None,
              parallelism=5, replace=False, secure=True,
-             buffer=data_collector,
              connection=None):
     ''' Upload data to s3 using the s3 multipart upload API.
 
@@ -88,7 +87,6 @@ def uploader(bucket, aws_access_key, aws_secret_key,
             parallelism: the number of threads to use while uploading.
             replace: will replace the key in s3 if set to true. (Default is false)
             secure: use ssl when talking to s3. (Default is true)
-            buffer: REMOVE THIS
             connection: used for testing
     '''
 
@@ -127,7 +125,7 @@ def uploader(bucket, aws_access_key, aws_secret_key,
 
         args = [multipart_obj.upload_part_from_file, progress_cb]
 
-        for part_no, part in enumerate(buffer(iterable)):
+        for part_no, part in enumerate(iterable):
             part_no += 1
             tpool.apply_async(upload_part, args + [part_no, part], callback=cb)
             in_upload.increment()
@@ -178,5 +176,5 @@ if __name__ == '__main__':
     def cb(part_no, uploaded, total):
         print part_no, uploaded, total
 
-    uploader(options.bucket, options.aws_key, options.aws_secret, data, options.key,
+    uploader(options.bucket, options.aws_key, options.aws_secret, buffer(data), options.key,
              progress_cb=cb, replace=True)
