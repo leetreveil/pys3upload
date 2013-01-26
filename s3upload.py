@@ -176,5 +176,5 @@ if __name__ == '__main__':
     def cb(part_no, uploaded, total):
         print part_no, uploaded, total
 
-    upload(options.bucket, options.aws_key, options.aws_secret, buffer(data), options.key,
+    upload(options.bucket, options.aws_key, options.aws_secret, data_collector(data), options.key,
            progress_cb=cb, replace=True)
