@@ -21,15 +21,15 @@ def data_collector(iterable, def_buf_size=5242880):
         Returns:
             A generator object
     '''
-    buffer = ''
+    buf = ''
     for data in iterable:
-        buffer += data
-        if len(buffer) >= def_buf_size:
-            output = buffer[:def_buf_size]
-            buffer = buffer[def_buf_size:]
+        buf += data
+        if len(buf) >= def_buf_size:
+            output = buf[:def_buf_size]
+            buf = buf[def_buf_size:]
             yield output
-    if len(buffer) > 0:
-        yield buffer
+    if len(buf) > 0:
+        yield buf
 
 def upload_part(upload_func, progress_cb, part_no, part_data):
     num_retries = 5
