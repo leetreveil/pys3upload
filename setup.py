@@ -6,7 +6,7 @@ def readme():
 
 setup(
     name = 's3upload',
-    version = '0.2.1',
+    version = '0.2.4',
     py_modules = ['s3upload'],
     author = 'Lee Treveil',
     author_email = 'leetreveil@gmail.com',
