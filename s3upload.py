@@ -49,7 +49,7 @@ def upload_part(upload_func, progress_cb, part_no, part_data):
 
 def upload(bucket, aws_access_key, aws_secret_key,
            iterable, key, progress_cb=None,
-           parallelism=5, replace=False, secure=True,
+           threads=5, replace=False, secure=True,
            connection=None):
     ''' Upload data to s3 using the s3 multipart upload API.
 
@@ -63,7 +63,7 @@ def upload(bucket, aws_access_key, aws_secret_key,
             key: the name of the key to create in the s3 bucket
             progress_cb: will be called with (part_no, uploaded, total)
             each time a progress update is available.
-            parallelism: the number of threads to use while uploading.
+            threads: the number of threads to use while uploading.
             replace: will replace the key in s3 if set to true. (Default is false)
             secure: use ssl when talking to s3. (Default is true)
             connection: used for testing
@@ -83,7 +83,7 @@ def upload(bucket, aws_access_key, aws_secret_key,
     upload.counter = 0
 
     try:
-        tpool = pool.ThreadPool(processes=parallelism)
+        tpool = pool.ThreadPool(processes=threads)
 
         def check_errors():
             try:
@@ -94,7 +94,7 @@ def upload(bucket, aws_access_key, aws_secret_key,
                 raise exc
 
         def waiter():
-            while upload.counter >= parallelism:
+            while upload.counter >= threads:
                 check_errors()
                 time.sleep(0.1)
 
@@ -135,6 +135,8 @@ def cli():
                       help='aws secret key')
     parser.add_option('-d', '--data', dest='data',
                       help='the data to upload to s3 -- if left blank will be read from STDIN')
+    parser.add_option('-t', '--threads', dest='threads', default=5, type='int',
+                      help='number of threads to use while uploading in parallel')
     (options, args) = parser.parse_args()
 
     if len(sys.argv) < 2:
@@ -156,7 +158,7 @@ def cli():
         print part_no, uploaded, total
 
     upload(options.bucket, options.aws_key, options.aws_secret, data_collector(data), options.key,
-           progress_cb=cb, replace=True)
+           progress_cb=cb, replace=True, threads=options.threads)
 
 if __name__ == '__main__':
     cli()

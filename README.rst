@@ -37,6 +37,8 @@ Use the s3upload CLI to upload from stdin or from data provided on the command l
                             aws secret key
       -d DATA, --data=DATA  the data to upload to s3 -- if left blank will be read
                             from STDIN
+      -t THREADS, --threads=THREADS
+                            number of threads to use while uploading in parallel
 
 Module
 ------
@@ -51,7 +53,7 @@ You can also interface with the module from python:
 
     def upload(bucket, aws_access_key, aws_secret_key,
            iterable, key, progress_cb=None,
-           parallelism=5, replace=False, secure=True):
+           threads=5, replace=False, secure=True):
     ''' Upload data to s3 using the s3 multipart upload API.
 
         Args:
@@ -64,7 +66,7 @@ You can also interface with the module from python:
             key: the name of the key to create in the s3 bucket
             progress_cb: will be called with (part_no, uploaded, total)
             each time a progress update is available.
-            parallelism: the number of threads to use while uploading.
+            threads: the number of threads to use while uploading.
             replace: will replace the key in s3 if set to true. (Default is false)
             secure: use ssl when talking to s3. (Default is true)
     '''
