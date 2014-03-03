@@ -63,7 +63,7 @@ def upload(bucket, aws_access_key, aws_secret_key,
             key: the name of the key to create in the s3 bucket
             progress_cb: will be called with (part_no, uploaded, total)
             each time a progress update is available.
-            threads: the number of threads to use while uploading.
+            threads: the number of threads to use while uploading. (Default is 5)
             replace: will replace the key in s3 if set to true. (Default is false)
             secure: use ssl when talking to s3. (Default is true)
             connection: used for testing
