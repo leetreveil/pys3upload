@@ -122,7 +122,7 @@ def upload(bucket, aws_access_key, aws_secret_key,
         tpool.terminate()
         raise
 
-if __name__ == '__main__':
+def cli():
     from optparse import OptionParser
     parser = OptionParser()
     parser.add_option('-b', '--bucket', dest='bucket',
@@ -157,3 +157,6 @@ if __name__ == '__main__':
 
     upload(options.bucket, options.aws_key, options.aws_secret, data_collector(data), options.key,
            progress_cb=cb, replace=True)
+
+if __name__ == '__main__':
+    cli()
