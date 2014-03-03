@@ -33,20 +33,20 @@ def data_collector(iterable, def_buf_size=5242880):
         yield buffer
 
 def upload_part(upload_func, progress_cb, part_no, part_data):
-        num_retries = 5
-        def _upload_part(retries_left=num_retries):
-            try:
-                with contextlib.closing(StringIO.StringIO(part_data)) as f:
-                    f.seek(0)
-                    cb = lambda c,t:progress_cb(part_no, c, t) if progress_cb else None
-                    upload_func(f, part_no, cb=cb, num_cb=100)
-            except Exception, exc:
-                retries_left -= 1
-                if retries_left > 0:
-                    return _upload_part(retries_left=retries_left)
-                else:
-                    return threading.ThreadError(repr(threading.current_thread()) + ' ' + repr(exc))
-        return _upload_part()
+    num_retries = 5
+    def _upload_part(retries_left=num_retries):
+        try:
+            with contextlib.closing(StringIO.StringIO(part_data)) as f:
+                f.seek(0)
+                cb = lambda c,t:progress_cb(part_no, c, t) if progress_cb else None
+                upload_func(f, part_no, cb=cb, num_cb=100)
+        except Exception, exc:
+            retries_left -= 1
+            if retries_left > 0:
+                return _upload_part(retries_left=retries_left)
+            else:
+                return threading.ThreadError(repr(threading.current_thread()) + ' ' + repr(exc))
+    return _upload_part()
 
 def upload(bucket, aws_access_key, aws_secret_key,
            iterable, key, progress_cb=None,
